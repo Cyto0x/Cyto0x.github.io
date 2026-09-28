@@ -21,7 +21,7 @@ Cybersecurity graduate (AABU, 2026) focused on offensive security, penetration t
 ## Stack
 
 - **Languages**: Python, C, JavaScript, Bash, SQL, Assembly (x86-64)
-- **Security Tools**: Burp Suite Pro, GDB (pwndbg/GEF), Ghidra, pwntools, BloodHound, Impacket, NetExec, Nmap, Wireshark, Playwright, Docker
+- **Security Tools**: Burp Suite Pro, OWASP ZAP, Postman, GDB (pwndbg/GEF), Ghidra, pwntools, BloodHound / SharpHound, Impacket, NetExec, Metasploit, Nmap, Wireshark, tshark, Frida, Android Studio, JADX, Playwright, Docker
 
 ---
 

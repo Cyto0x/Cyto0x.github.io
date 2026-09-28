@@ -9,12 +9,12 @@ const DATA = {
 
   // [title, label, text]
   focus: [
-    ["Application security", "Primary focus", "Web and API testing, authentication and access control, JWT, SQL injection, XSS, SSRF, SSTI, XXE, LFI, deserialization, race conditions, business logic and exploit chaining."],
-    ["Binary exploitation", "Pwn and reverse engineering", "Heap exploitation (use-after-free, tcache poisoning, safe-linking), ROP and SROP, stack pivots, seccomp-aware ORW chains, libc leaks. Analysis with Ghidra, GDB, pwndbg and Radare2."],
-    ["Windows and Active Directory", "Hands-on lab experience", "Enumeration, Kerberoasting, AS-REP roasting, ACL abuse, BloodHound paths, AD CS, RBCD, DCSync, coercion and lateral movement in extensive lab environments."],
-    ["Linux and networking", "Hands-on lab experience", "Enumeration and privilege escalation, service and traffic analysis, tunneling and pivoting with Chisel and Ligolo-NG."],
-    ["Mobile", "Hands-on lab experience", "Android and iOS static analysis with JADX and APKTool, secret discovery and Burp-based traffic inspection."],
-    ["Security automation", "Builder", "Python tooling for scanning, network forensics and wordlist generation, plus Docker-based challenge infrastructure."]
+    ["Application Security", "Primary focus", "Web and API penetration testing, authentication and authorization attacks, JWT vulnerabilities, SSTI, SSRF, SQLi, XSS, business logic flaws, and exploit chaining. Tooling includes Burp Suite Professional, OWASP ZAP, Postman, ffuf, and custom exploitation scripts."],
+    ["Binary Exploitation & RE", "Pwn and reverse engineering", "Heap exploitation (use-after-free, tcache poisoning, safe-linking), ROP and SROP, stack pivots, seccomp-aware ORW chains, and libc leaks. Tooling and analysis with GDB (pwndbg, GEF), pwntools, Ghidra, and Radare2."],
+    ["Windows & Active Directory", "Hands-on lab experience", "Domain reconnaissance, Kerberos attacks (Kerberoasting, AS-REP roasting), ACL abuse, AD CS exploitation, RBCD, DCSync, coercion, and lateral movement. Tooling includes BloodHound / SharpHound, Impacket suite, NetExec (CrackMapExec), Rubeus, PowerView, and Evil-WinRM."],
+    ["Linux & Network Security", "Hands-on lab experience", "Host enumeration, Linux privilege escalation, network protocol analysis, service exploitation, and pivoting. Tooling includes Wireshark, tshark, Nmap, Metasploit Framework, tcpdump, and tunneling via Ligolo-NG and Chisel."],
+    ["Mobile Security", "Android & iOS analysis", "Static and dynamic security analysis of mobile applications, reverse engineering APK/IPA binaries, local secret extraction, insecure IPC, and SSL pinning bypass. Tooling includes Frida, Android Studio, ADB, JADX-GUI, APKTool, and Burp Suite proxying."],
+    ["Security Automation", "Builder & Researcher", "Developing offensive security tooling and automated exploit engines in Python: modular scanners with Playwright browser validation, custom wordlist generators, PCAP forensic parsers, and containerized Docker environments for CTF infrastructure."]
   ],
 
   cases: [

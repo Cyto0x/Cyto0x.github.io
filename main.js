@@ -1,72 +1,84 @@
 const D = DATA, L = D.links, $ = s => document.querySelector(s);
 const A = (u, t) => u ? `<a href="${u}" target="_blank" rel="noopener">${t}</a>` : "";
-const G = a => `<div class="grid">${a.join("")}</div>`;
+const G = (a, cls = "grid") => `<div class="${cls}">${a.join("")}</div>`;
 const S = (id, t, b) => { const e = $("#" + id); b ? e.innerHTML = `<h2>${t}</h2>${b}` : e.remove(); };
-const B = `<div class="btns">${A(L.github, "GitHub")}${A(L.linkedin, "LinkedIn")}${A(L.cv, "Download CV")}${A(L.email && "mailto:" + L.email, "Email")}</div>`;
 
-/* ── Row card helper ── */
-const C = ([t, k, x, u], extraClass = "") =>
-  `<div class="row fade-in ${extraClass}"><h3>${t}</h3><span class="k">${k || ""}</span><p>${x || ""}</p><p>${A(u, "↗ Details")}</p></div>`;
+/* ── Buttons ── */
+const B = [
+  A(L.github,   "GitHub"),
+  A(L.linkedin, "LinkedIn"),
+  A(L.cv,       "Download CV"),
+  A(L.email && "mailto:" + L.email, "Email"),
+  `<a href="#work">View Projects</a>`
+].filter(Boolean).join("");
+const Btns = `<div class="btns">${B}</div>`;
 
-/* ── Hero: animated terminal prompt ── */
+/* ── Row card ── */
+const C = ([t, k, x, u], cls = "") =>
+  `<div class="row fade-in ${cls}"><h3>${t}</h3><span class="k">${k || ""}</span><p>${x || ""}</p>${u ? `<p>${A(u, "↗ Details")}</p>` : ""}</div>`;
+
+/* ══════════════════════════════════════
+   HERO
+══════════════════════════════════════ */
+const certPills = D.certpills.map(c => `<span class="cert-pill">${c}</span>`).join("");
 const promptFull = `${D.handle.toLowerCase()}@sec:~$ whoami`;
 let typed = 0;
 document.getElementById("hero").innerHTML =
   `<p id="prompt"><span id="cursor-text"></span><span class="cursor-blink">▋</span></p>` +
   `<h1>${D.name}</h1>` +
   `<p class="acc">${D.headline}</p>` +
-  `<p class="lead">${D.summary}</p>${B}`;
+  `<p class="cert-pills">${certPills}</p>` +
+  `<p class="lead">${D.summary}</p>${Btns}`;
 const promptEl = document.getElementById("cursor-text");
 const typeInterval = setInterval(() => {
   promptEl.textContent = promptFull.slice(0, ++typed);
   if (typed >= promptFull.length) clearInterval(typeInterval);
 }, 50);
 
-/* ── Expertise ── */
-S("focus", "Expertise", G(D.focus.map(f => C(f))));
-
-/* ── Projects ── */
-const accordion = (c, extraClass = "") =>
-  `<details class="fade-in ${extraClass}">` +
-  `<summary><b>${c.title}</b><span class="k">${c.kind}</span></summary>` +
-  `<p>${c.text}</p>` +
-  `<p class="tags">${c.tags.map(t => `<span>${t}</span>`).join("")}</p>` +
-  `<p>${c.repo ? A(c.repo, "↗ View repository") : ""}</p>` +
-  `</details>`;
-
-S("work", "Projects and case studies",
-  `<div class="cases-list">` +
-  D.cases.map(c => accordion(c)).join("") +
+/* ══════════════════════════════════════
+   FEATURED PROJECTS
+   — top summary always visible, full detail in accordion
+══════════════════════════════════════ */
+const featuredCard = c =>
+  `<div class="feat-card fade-in">` +
+  `<div class="feat-header">` +
+  `<div><h3>${c.title}</h3><span class="k">${c.kind}</span></div>` +
+  `${c.repo ? `<div>${A(c.repo, "↗ Repo")}</div>` : ""}` +
   `</div>` +
-  `<p class="sub">Tools I built</p>` +
-  G(D.tools.map(([n, x, u]) => `<div class="row fade-in"><h3>${A(u, n)}</h3><p>${x}</p></div>`))
+  `<p class="feat-summary">${c.summary}</p>` +
+  `<p class="tags">${c.tags.map(t => `<span>${t}</span>`).join("")}</p>` +
+  `<details>` +
+  `<summary><b>More detail</b></summary>` +
+  `<p>${c.text}</p>` +
+  `</details>` +
+  `</div>`;
+
+S("work", "Featured Projects",
+  `<div class="feat-list">${D.featured.map(featuredCard).join("")}</div>` +
+  `<p class="sub">Other projects</p>` +
+  G(D.other.map(c =>
+    `<div class="row fade-in">` +
+    `<h3>${c.repo ? A(c.repo, c.title) : c.title}</h3>` +
+    `<span class="k">${c.kind}</span>` +
+    `<p>${c.text}</p>` +
+    `<p class="tags">${c.tags.map(t => `<span>${t}</span>`).join("")}</p>` +
+    `</div>`
+  ))
 );
 
-/* ── CTF and challenge development ── */
-const ctf = D.ctf;
+/* ══════════════════════════════════════
+   EXPERIENCE
+══════════════════════════════════════ */
+S("exp", "Experience", G(D.exp.map(e => C(e))));
 
-// Competition cards — Vault Protocol gets special amber card
-const compCards = ctf.competitions.map((comp, i) => {
-  const isVault = i === 0; // first entry is always The Vault Protocol
-  return C(comp, isVault ? "vault-card" : "");
-});
+/* ══════════════════════════════════════
+   EDUCATION (separate)
+══════════════════════════════════════ */
+S("edu", "Education", G(D.edu.map(e => C(e))));
 
-// Challenge accordions — pwn get red, web get purple
-const challengeAccordions = ctf.challenges.map(c => {
-  const isPwn = c.kind.toLowerCase().includes("pwn");
-  return accordion(c, `ctf-challenge${isPwn ? " ctf-pwn" : ""}`);
-});
-
-S("ctf", "CTF and challenge development",
-  G(compCards) +
-  `<p class="sub">Challenges I authored &mdash; JCC Catch The Hilal</p>` +
-  `<div class="cases-list">` + challengeAccordions.join("") + `</div>`
-);
-
-/* ── Experience ── */
-S("exp", "Experience and education", G(D.exp.map(e => C(e))));
-
-/* ── Certifications ── */
+/* ══════════════════════════════════════
+   CERTIFICATIONS
+══════════════════════════════════════ */
 S("certs", "Certifications",
   `<div class="cert-grid">` +
   D.certs.map(([abbr, full, meta, url]) =>
@@ -81,35 +93,61 @@ S("certs", "Certifications",
   `</div>`
 );
 
-/* ── Labs ── */
+/* ══════════════════════════════════════
+   CTF — competitions + no challenge accordions (challenges are in Projects)
+══════════════════════════════════════ */
+const ctf = D.ctf;
+S("ctf", "CTF & Challenge Development",
+  G(ctf.competitions.map((comp, i) => C(comp, i === 0 ? "vault-card" : "")))
+);
+
+/* ══════════════════════════════════════
+   TECHNICAL FOCUS
+   — 2 primary cards + keyword cloud + 2 secondary cards
+══════════════════════════════════════ */
+const keywordCloud = `<div class="keyword-cloud">${D.keywords.map(k => `<span>${k}</span>`).join("")}</div>`;
+S("focus", "Technical Focus",
+  G(D.primary.map((f, i) => C(f, i === 0 ? "focus-primary" : "focus-primary focus-sec"))) +
+  keywordCloud +
+  `<p class="sub">Also practiced</p>` +
+  G(D.secondary.map(f => C(f)))
+);
+
+/* ══════════════════════════════════════
+   LABS
+══════════════════════════════════════ */
 const th = D.labs.thm, ps = D.labs.ps, tot = ps.reduce((s, x) => s + x[1], 0);
-S("labs", `Labs and practice<small>snapshot, ${D.snapshot}</small>`, G([
+S("labs", `Labs & Practice<small>snapshot · ${D.snapshot}</small>`, G([
   `<div class="row fade-in">
     <h3>TryHackMe</h3>
-    <p class="stat">${th.rooms}</p>
-    <p class="k">rooms completed</p>
-    <p>${th.streak}-day streak &mdash; my personal longest streak &middot; top ${th.top} globally</p>
+    <p class="stat">${th.rooms}</p><p class="k">rooms completed</p>
+    <p>${th.streak}-day streak — my longest streak &middot; top ${th.top} globally</p>
     <p>${A(L.tryhackme, "↗ View profile")}</p>
   </div>`,
   `<div class="row fade-in">
     <h3>PortSwigger Web Security Academy</h3>
-    <p class="stat">${tot}</p>
-    <p class="k">labs completed</p>
+    <p class="stat">${tot}</p><p class="k">labs completed</p>
     <p>${ps.map(x => `${x[0]}: <strong>${x[1]}</strong>/${x[2]}`).join(" &middot; ")}</p>
     <p>${A(L.portswigger, "↗ View profile")}</p>
   </div>`
 ]));
 
-/* ── Writeups ── */
+/* ══════════════════════════════════════
+   WRITEUPS / CONTACT
+══════════════════════════════════════ */
 S("writeups", "Writeups", D.writeups.length ? G(D.writeups.map(w => C(w))) : "");
-
-/* ── Contact ── */
 S("contact", "Contact",
-  `<p class="lead" style="margin-top:0">Find me on LinkedIn, or browse the code on GitHub.</p>${B}`
+  `<p class="lead" style="margin-top:0">Find me on LinkedIn or browse the code on GitHub.</p>${Btns}`
 );
 
-/* ── Navbar ── */
-const N = { focus: "Expertise", work: "Projects", ctf: "CTF", exp: "Experience", certs: "Certs", labs: "Labs", writeups: "Writeups", contact: "Contact" };
+/* ══════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════ */
+const N = {
+  work: "Projects", exp: "Experience", edu: "Education",
+  certs: "Certs", ctf: "CTF", focus: "Skills", labs: "Labs",
+  writeups: "Writeups", contact: "Contact"
+};
 $("#nav").innerHTML = Object.keys(N).filter(k => $("#" + k)).map(k => `<a href="#${k}">${N[k]}</a>`).join("");
 
 /* ── Footer ── */
@@ -117,10 +155,8 @@ $("#foot").innerHTML =
   `<span>&copy; ${new Date().getFullYear()} ${D.name}</span>` +
   `<span class="mono" style="color:var(--ac);letter-spacing:1px">${D.handle}</span>`;
 
-/* ── Scroll fade-in observer ── */
+/* ── Scroll fade-in ── */
 const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
-  });
-}, { threshold: 0.05, rootMargin: "0px 0px -24px 0px" });
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); } });
+}, { threshold: 0.04, rootMargin: "0px 0px -20px 0px" });
 document.querySelectorAll(".fade-in").forEach(el => obs.observe(el));
